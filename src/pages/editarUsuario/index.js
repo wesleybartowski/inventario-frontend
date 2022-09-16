@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import Head from "../../componentes/Head"
 import Menu from "../../componentes/Menu"
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function Cadastrousuario() {
-    const navigate =useNavigate();
+export default function Editarusuario() {
+    const navigate = useNavigate();
+    const { id } = useParams();
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [confirmar, setConfirmar] = useState("");
     const [msg, setMsg] = useState([]);
-    const [dados,setDados] = useState([]);
-    
+    const [dados, setDados] = useState([]);
+
 
     function validaremail() {
-       var re = /\S+@\S+\.\S+/;
-       return re.test(email);
+        var re = /\S+@\S+\.\S+/;
+        return re.test(email);
 
     }
     useEffect(() => {
@@ -25,11 +26,17 @@ export default function Cadastrousuario() {
     function mostrardados() {
         let lista = JSON.parse(localStorage.getItem("cad-usuarios") || "[]");
         setDados(lista);
+        let usu = lista.filter(item => item.id == id);
+        setNome(usu[0].nome);
+        setEmail(usu[0].email);
+        setSenha(usu[0].senha);
+        setConfirmar(usu[0].senha);
+
     }
-    function verificarduplicidade(email){
+    function verificarduplicidade(email) {
         let dadosnovos = [];
-        dadosnovos = dados.filter(item=>item.email==email);
-        if(dadosnovos.length>0){
+        dadosnovos = dados.filter(item => item.email == email);
+        if (dadosnovos.length > 0) {
             return true
         }
         return false;
@@ -38,19 +45,19 @@ export default function Cadastrousuario() {
         e.preventDefault();
         let i = 0;
         let errorMsg = [];
-        if (validaremail() == false) {
-            errorMsg.push('por favor! coloque um e-mail valido!\n');
-            i++;
-        }
+        // // if (validaremail()) {
+        // //     errorMsg.push('por favor! coloque um e-mail valido!\n');
+        // //     i++;
+        // }
         if (nome.length < 3) {
             errorMsg.push("campo nome tem menos de 3 caracteres\n");
             i++;
         }
-        if(verificarduplicidade(email)==true){
-            errorMsg.push("O e-mail fornecido ja esta cadastrado!\n");
-            i++;
-        }
-         if (email.length==0) {
+        // if (verificarduplicidade(email) == true) {
+        //     errorMsg.push("O e-mail fornecido ja esta cadastrado!\n");
+        //     i++;
+        // }
+        if (email.length == 0) {
             errorMsg.push("Campo de e-mail esta vazio\n");
             i++;
         }
@@ -61,25 +68,46 @@ export default function Cadastrousuario() {
             errorMsg.push("campo senha tem menos de 3 caracteres\n");
             i++;
         }
-        else if(senha!==confirmar){
+        else if (senha !== confirmar) {
             errorMsg.push("Senha e confirmação não conferem\n");
             i++;
-        }    
+        }
         if (i == 0) {
-           
+
             setMsg("");
-            let lista = JSON.parse(localStorage.getItem("cad-usuarios")||"[]");
-            lista.push(
-                {
-                 id:Date.now().toString(36)+Math.floor(Math.pow(10,12)+Math.random()*9*Math.pow(10,12)).toString(36),
-                 nome:nome,
-                 email:email,
-                 senha:senha
+            let dadosnovos=[];
+            let lista=JSON.parse(localStorage.getItem("cad-usuarios") || "[]");
+            dadosnovos=lista.map((function(item){
+                if (item.id==id){
+                    return {
+                        id:id,
+                        nome:nome,
+                        email:email,
+                        senha:senha
+
+                    }
+                 } else {
+                    return {
+                        id:item.id,
+                        nome:item.nome,
+                        email:item.email,
+                        senha:item.senha
+
+                    }
                 }
-            )
-            localStorage.setItem("cad-usuarios",JSON.stringify(lista));
+
+
+            }));
+            // {
+            //     id: Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9 * Math.pow(10, 12)).toString(36),
+            //     nome: nome,
+            //     email: email,
+            //     senha: senha
+            // }
+
+            localStorage.setItem("cad-usuarios", JSON.stringify(dadosnovos));
             alert("Dados Salvos com Sucesso!");
-            Navigate("/listausuario");
+            navigate("/listausuarios");
 
         } else {
             setMsg(errorMsg);
