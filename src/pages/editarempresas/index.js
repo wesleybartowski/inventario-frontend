@@ -3,44 +3,44 @@ import Head from "../../componentes/Head"
 import Menu from "../../componentes/Menu"
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function Editarusuario() {
+export default function Editarempresas() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [nome, setNome] = useState("");
-    const [email, setEmail] = useState("");
-    const [senha, setSenha] = useState("");
-    const [confirmar, setConfirmar] = useState("");
+    const [responsavel, setResponsavel] = useState("");
+    const [contato, setContato] = useState("");
+    // const [confirmar, setConfirmar] = useState("");
     const [msg, setMsg] = useState([]);
     const [dados, setDados] = useState([]);
 
 
-    function validaremail() {
-        var re = /\S+@\S+\.\S+/;
-        return re.test(email);
+    // function validaremail() {
+    //     var re = /\S+@\S+\.\S+/;
+    //     return re.test(email);
 
-    }
+    // }
     useEffect(() => {
         mostrardados();
 
     }, [])
     function mostrardados() {
-        let lista = JSON.parse(localStorage.getItem("cad-usuarios") || "[]");
+        let lista = JSON.parse(localStorage.getItem("cad-empresas") || "[]");
         setDados(lista);
-        let usu = lista.filter(item => item.id == id);
-        setNome(usu[0].nome);
-        setEmail(usu[0].email);
-        setSenha(usu[0].senha);
-        setConfirmar(usu[0].senha);
+        let emp = lista.filter(item => item.id == id);
+        setNome(emp[0].nome);
+        setResponsavel(emp[0].responsavel);
+        setContato(emp[0].contato);
+        // setConfirmar(usu[0].senha);
 
     }
-    function verificarduplicidade(email) {
-        let dadosnovos = [];
-        dadosnovos = dados.filter(item => item.email == email);
-        if (dadosnovos.length > 0) {
-            return true
-        }
-        return false;
-    }
+    // function verificarduplicidade(email) {
+    //     let dadosnovos = [];
+    //     dadosnovos = dados.filter(item => item.email == email);
+    //     if (dadosnovos.length > 0) {
+    //         return true
+    //     }
+    //     return false;
+    // }
     function salvardados(e) {
         e.preventDefault();
         let i = 0;
@@ -57,41 +57,41 @@ export default function Editarusuario() {
         //     errorMsg.push("O e-mail fornecido ja esta cadastrado!\n");
         //     i++;
         // }
-        if (email.length == 0) {
-            errorMsg.push("Campo de e-mail esta vazio\n");
-            i++;
-        }
-        else if (!validaremail()) {
-            errorMsg.push("Por favor! coloque um e-mail valido!\n")
-        }
-        if (senha.length < 3) {
-            errorMsg.push("campo senha tem menos de 3 caracteres\n");
-            i++;
-        }
-        else if (senha !== confirmar) {
-            errorMsg.push("Senha e confirmação não conferem\n");
-            i++;
-        }
+        // if (email.length == 0) {
+        //     errorMsg.push("Campo de e-mail esta vazio\n");
+        //     i++;
+        // }
+        // else if (!validaremail()) {
+        //     errorMsg.push("Por favor! coloque um e-mail valido!\n")
+        // }
+        // if (senha.length < 3) {
+        //     errorMsg.push("campo senha tem menos de 3 caracteres\n");
+        //     i++;
+        // }
+        // else if (senha !== confirmar) {
+        //     errorMsg.push("Senha e confirmação não conferem\n");
+        //     i++;
+        // }
         if (i == 0) {
 
             setMsg("");
             let dadosnovos=[];
-            let lista=JSON.parse(localStorage.getItem("cad-usuarios") || "[]");
+            let lista=JSON.parse(localStorage.getItem("cad-empresas") || "[]");
             dadosnovos=lista.map((function(item){
                 if (item.id==id){
                     return {
                         id:id,
                         nome:nome,
-                        email:email,
-                        senha:senha
+                        responsavel:responsavel,
+                        contato:contato
 
                     }
                  } else {
                     return {
                         id:item.id,
                         nome:item.nome,
-                        email:item.email,
-                        senha:item.senha
+                        responsavel:item.responsavel,
+                        contato:item.contato
 
                     }
                 }
@@ -105,9 +105,9 @@ export default function Editarusuario() {
             //     senha: senha
             // }
 
-            localStorage.setItem("cad-usuarios", JSON.stringify(dadosnovos));
+            localStorage.setItem("cad-empresas", JSON.stringify(dadosnovos));
             alert("Dados Salvos com Sucesso!");
-            navigate("/listausuarios");
+            navigate("/listaempresas");
 
         } else {
             setMsg(errorMsg);
@@ -118,7 +118,7 @@ export default function Editarusuario() {
             <Menu />
             <div className="principal">
 
-                <Head title="Editar Usuários" />
+                <Head title="Editar Empresa" />
                 <section className="form-cadastro">
                     <form onSubmit={salvardados}>
                         <label>Nome</label>
@@ -127,26 +127,26 @@ export default function Editarusuario() {
                             onChange={e => setNome(e.target.value)}
 
                         />
-                        <label>E-mail</label>
-                        <input placeholder="e-mail@email.com"
+                        <label>Responsavel</label>
+                        <input placeholder="responsavel"
                             type="text"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
+                            value={responsavel}
+                            onChange={e => setResponsavel(e.target.value)}
 
                         />
-                        <label>Senha</label>
-                        <input placeholder=""
+                        <label>Contato</label>
+                        <input placeholder="contato"
                             type="password"
-                            value={senha}
-                            onChange={e => setSenha(e.target.value)}
+                            value={contato}
+                            onChange={e => setContato(e.target.value)}
                         />
-                        <label>confirma Senha</label>
+                        {/* <label>confirma Senha</label>
                         <input placeholder=""
                             type="password"
                             value={confirmar}
                             onChange={e => setConfirmar(e.target.value)}
 
-                        />
+                        /> */}
                         <button className="button_save" type="submit">
                             Salvar
                         </button>
